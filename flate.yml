@@ -4,18 +4,16 @@
   become: yes
 
   vars:
-    paths:
-      platform: "./core/platform"
-      space: "./core/space"
     builder:
       id: 1001
       name: flate
+    home: "/home/{{builder.name}}"
     gpg:
       key: '{{ lookup("env", "GPG__KEY_ID") }}'
       pass: '{{ lookup("env", "GPG__PASSWORD") }}'
-      home_dirs:
+      dirs:
         - "/root/.gnupg"
-        - "/home/{{builder.name}}/.gnupg"
+        - "{{home}}/.gnupg"
       configs:
         - { name: "gpg-agent.conf", content: "allow-loopback-pinentry" }
         - { name: "gpg.conf", content: "pinentry-mode loopback" }
@@ -29,6 +27,7 @@
       - flate-fctl
       - git
       - glibc
+      - grass
       - go
       - grim
       - gtk-layer-shell
@@ -69,11 +68,11 @@
   tasks:
     - name: "System: Added Space mirror"
       copy:
-        src: "{{paths.platform}}/pacman.conf"
+        src: "./core/platform/pacman.conf"
         dest: /etc/pacman.conf
 
     - name: "System: Added makepkg config"
-      shell: "envsubst < {{paths.platform}}/makepkg.conf > /etc/makepkg.conf"
+      shell: "envsubst < ./core/platform/makepkg.conf > /etc/makepkg.conf"
 
     - name: "System: Added {{builder.name}} group"
       group:
@@ -97,7 +96,7 @@
         --allow-secret-key-import --import /keys/gpg.asc"
       become_user: "{{builder.name}}"
       become: no
-      loop: "{{gpg.home_dirs}}"
+      loop: "{{gpg.dirs}}"
 
     - name: "System: GPG config"
       copy:
@@ -112,18 +111,21 @@
         group: "{{builder.name}}"
         recurse: yes
       loop:
-        - "{{paths.space}}"
+        - "{{home}}"
 
     - name: "Pacman: Start keyring"
       shell: pacman-key --init
 
-    - name: "Pacman: Add packager pub key"
-      shell: pacman-key --add /keys/gpg-pub.key
+    - name: "Pacman: Populate"
+      shell: pacman-key --populate archlinux
+
+    - name: "Pacman: Keyserver"
+      shell: "pacman-key --recv-key 0x{{gpg.key}} --keyserver keys.openpgp.org"
 
     - name: "Pacman: Check fingerprint"
       shell: "pacman-key --finger {{gpg.key}}"
 
-    - name: "Pacman: Sign local key"
+    - name: "Pacman: Sign key"
       shell: "pacman-key --lsign-key {{gpg.key}}"
 
     - name: "Pacman: Upgrade"
