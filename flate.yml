@@ -4,6 +4,9 @@
   become: yes
 
   vars:
+    paths:
+      platform: "./core/platform"
+      space: "./core/space"
     builder:
       id: 1001
       name: flate
@@ -66,11 +69,11 @@
   tasks:
     - name: "System: Added Space mirror"
       copy:
-        src: ./platform/pacman.conf
+        src: "{{paths.platform}}/pacman.conf"
         dest: /etc/pacman.conf
 
     - name: "System: Added makepkg config"
-      shell: envsubst < ./platform/makepkg.conf > /etc/makepkg.conf
+      shell: "envsubst < {{paths.platform}}/makepkg.conf > /etc/makepkg.conf"
 
     - name: "System: Added {{builder.name}} group"
       group:
@@ -109,7 +112,7 @@
         group: "{{builder.name}}"
         recurse: yes
       loop:
-        - /src/space
+        - "{{paths.space}}"
 
     - name: "Pacman: Start keyring"
       shell: pacman-key --init

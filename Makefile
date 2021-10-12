@@ -38,7 +38,7 @@ endef
 # @name: up
 # @desc: Sets up the building environment.
 up:
-	@docker-compose up -d
+	@docker compose up -d
 
 # @name: sync
 # @desc: Synchronizes all source code needed for construction.
@@ -54,7 +54,7 @@ provision:
 # @desc: Build ISO for FlateOS.
 build:
 	@$(call exec, sudo mkarchiso -v -w $(ISO__TMPDIR) -g ${GPG__KEY_ID} \
-	-P '${GPG__NAME} ${GPG__MAIL}' -o $(ISO__DIST) ./platform)
+	-P '${GPG__NAME} ${GPG__MAIL}' -o $(ISO__DIST) ./core/platform)
 
 # @name: clean
 # @desc: Clean the work directory.
@@ -64,6 +64,6 @@ clean:
 # @name: space
 # @desc: Compile and update local packages.
 space:
-	@$(call exec, sudo -u flate ./space/space.sh $(PKGS))
+	@$(call exec, sudo -u flate ./core/space/space.sh $(PKGS))
 
 .PHONY: up sync provision build clean space
