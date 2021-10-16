@@ -17,7 +17,7 @@
       configs:
         - { name: "gpg-agent.conf", content: "allow-loopback-pinentry" }
         - { name: "gpg.conf", content: "pinentry-mode loopback" }
-    packages:
+    dependencies:
       - archiso
       - atk
       - base-devel
@@ -27,13 +27,11 @@
       - flate-fctl
       - git
       - glibc
-      - grass
       - go
       - grim
       - gtk-layer-shell
       - gtk-update-icon-cache
       - gtk3
-      - hwinfo
       - jq
       - kconfig
       - kcoreaddons
@@ -137,5 +135,5 @@
 
     - name: "Pacman: Install dependencies"
       pacman:
-        name: "{{packages}}"
+        name: "{{dependencies}}"
         state: latest
