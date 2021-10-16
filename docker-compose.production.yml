@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  flateos:
+    container_name: "flateos"
+    volumes:
+      - .:/src
+      - $DIR__KEYS:/keys
+    env_file: .env

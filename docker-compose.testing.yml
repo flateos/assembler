@@ -1,0 +1,9 @@
+version: "3.8"
+
+services:
+  flateos:
+    container_name: "flateos_e2e"
+    volumes:
+      - .:/src
+      - ./e2e/.env.test:/src/.env
+    env_file: ./e2e/.env.test

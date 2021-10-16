@@ -27,23 +27,15 @@ define exec
 	docker exec -it flateos $(1)
 endef
 
-# @name: get_manifest_url
-# @desc: Obtains project URL for the specified protocol.
-define get_manifest_url
-    $(shell [[ $(OPT__USE_SSH) == true ]] \
-	&& echo "git@github.com:flateos/manifest.git" \
-	|| echo "https://github.com/flateos/manifest.git")
-endef
-
 # @name: up
 # @desc: Sets up the building environment.
 up:
-	@docker compose up -d
+	@docker compose -f docker-compose.yml -f docker-compose.production.yml up -d
 
 # @name: sync
 # @desc: Synchronizes all source code needed for construction.
 sync:
-	repo init -u $(call get_manifest_url) -b main && repo sync
+	./bin/repo init -u https://github.com/flateos/manifest.git -b main && ./bin/repo sync
 
 # @name: up
 # @desc: Provides development environment.

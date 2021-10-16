@@ -3,7 +3,6 @@ version: "3.8"
 services:
   flateos:
     image: "archlinux:latest"
-    container_name: "flateos"
     restart: unless-stopped
     working_dir: "/src"
     entrypoint: "./bootstrap.sh"
@@ -11,10 +10,6 @@ services:
       - flateos-net
     privileged: true
     tty: true
-    volumes:
-      - .:/src
-      - $DIR__KEYS:/keys
-    env_file: .env
 
 networks:
   flateos-net:

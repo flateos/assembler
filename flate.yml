@@ -32,7 +32,7 @@
       - gtk-layer-shell
       - gtk-update-icon-cache
       - gtk3
-      - hwinfo
+      # - hwinfo
       - jq
       - kconfig
       - kcoreaddons

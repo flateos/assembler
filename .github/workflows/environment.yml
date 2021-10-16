@@ -6,6 +6,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: webfactory/ssh-agent@v0.5.3
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Create test variables
+        run: cp ./e2e/.env.test ./.env
+
+      - name: Sync Projects
+        run: make sync
 
       - name: Provision environment
-        run: make up
+        run: docker compose -f docker-compose.yml -f docker-compose.testing.yml up
